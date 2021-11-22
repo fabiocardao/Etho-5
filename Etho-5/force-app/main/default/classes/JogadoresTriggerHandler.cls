@@ -6,8 +6,20 @@ public without sharing class JogadoresTriggerHandler {
     }
 
     private static void beforeUpdate(Jogador__c record, Jogador__c recordOld) {
-        if (!jogadorOld.Eliminado__c && jogador.Eliminado__c) {
-            jogador.DataMorte__c = System.now();
+        if (isChanged(recordOld.Eliminado__c, record.Eliminado__c)) {
+            setValue(record, Jogador__c.DataMorte__c, System.now());
         }
+    }
+
+    private static Boolean isChanged(Jogador__c record, Jogador__c recordToCompare, Schema.SObjectField fieldToEvaluate) {
+        return isChanged(record.get(fieldToEvaluate), recordToCompare.get(fieldToEvaluate));
+    }
+
+    private static Boolean isChanged(Object value, Object valueToCompare) {
+        return value != valueToCompare;
+    }
+
+    private static void setValue(Jogador__c record, Schema.SObjectField field, Object value) {
+        record.put(field, value);
     }
 }
