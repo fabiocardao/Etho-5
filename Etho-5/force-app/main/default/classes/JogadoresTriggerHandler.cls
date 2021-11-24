@@ -1,4 +1,5 @@
 public without sharing class JogadoresTriggerHandler {
+
     public static void beforeUpdate(List<Jogador__c> records, Map<Id, Jogador__c> oldMap) {
         for (Jogador__c jogador : records) {
             beforeUpdate(jogador, oldMap.get(jogador.Id));
@@ -22,28 +23,27 @@ public without sharing class JogadoresTriggerHandler {
     }
 
     private static void handleEliminacaoMorte(Jogador__c record, Jogador__c recordOld) {
-        if (foiEliminado(record, recordOld) || morreu(record, recordOld)) {
-            if (ehJogadorPadrao(record, recordOld)) {
-                if (foiEliminado(record, recordOld)) {
-                    setValue(record, Jogador__c.DataMorte__c, System.now());
-                    setValue(record, Jogador__c.Morreu__c, true);
-                }
-            } else if (morreu(record, recordOld)) {
-                    setValue(record, Jogador__c.DataMorte__c, System.now());
-                    setValue(record, Jogador__c.Morreu__c, true);
-            }
+        if (ehJogadorPadrao(record, recordOld) && foiEliminado(record, recordOld)) {
+            setValue(record, Jogador__c.Morreu__c, true);
+        }
+
+        if (morreu(record, recordOld)) {
+            setValue(record, Jogador__c.DataMorte__c, System.now());
+            setValue(record, Jogador__c.Eliminado__c, true);
         }
     }
 
     private static Boolean ehJogadorPadrao(Jogador__c record, Jogador__c recordOld) {
-        return true;
+        return record.RecordTypeId.equals(Schema.SObjectType.Jogador__c.getRecordTypeInfosByDeveloperName()
+            .get(Label.RECORD_TYPE_DEVELOPER_NAME_JOGADOR_PADRAO).getRecordTypeId());
     }
 
+
     private static Boolean foiEliminado(Jogador__c record, Jogador__c recordOld) {
-        return true;
+        return isChanged(recordOld, record, Jogador__c.Eliminado__c);
     }
 
     private static Boolean morreu(Jogador__c record, Jogador__c recordOld) {
-        return true;
+        return isChanged(recordOld, record, Jogador__c.Morreu__c);
     }
 }
