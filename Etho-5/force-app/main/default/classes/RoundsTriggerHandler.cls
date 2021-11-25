@@ -29,7 +29,7 @@ public without sharing class RoundsTriggerHandler {
     }
 
     private static Boolean roundFinalizadoPorSuspensao(String status, String statusOld) {
-        return statusOld.equals(STATUS_ROUND_SUSPENSO) && status.equals(STATUS_ROUND_FINALIZADO)
+        return statusOld.equals(STATUS_ROUND_SUSPENSO) && status.equals(STATUS_ROUND_FINALIZADO);
     }
 
     private static void setValorPagarMortos(Decimal valorPagar, List<Jogador__c> jogadoresRound) {
