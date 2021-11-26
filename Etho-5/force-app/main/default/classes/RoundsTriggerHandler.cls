@@ -22,8 +22,8 @@ public without sharing class RoundsTriggerHandler {
     //Se o campo Premio__c estiver considerando esse cara, o campo está errado.
     //Se o campo TotalJogadoresEliminados__c estiver considerando esse cara, o campo está errado.
     private static void handleSuspensao(Round__c record, Round__c recordOld, List<Jogador__c> jogadoresRound, List<Jogador__c> jogadoresToUpdate) {
-        if (roundFinalizadoPorSuspensao(record.Status__c, recordOld.Status__c)) {
-            setValorPagarMortos((record.Premio__c / record.TotalJogadoresEliminados__c), jogadoresRound);
+        if (!jogadoresRound.isEmpty() && roundFinalizadoPorSuspensao(record.Status__c, recordOld.Status__c)) {
+            setValorPagarMortos(record.Premio__c, getPremioReal(record.Premio__c, jogadoresRound));
             jogadoresToUpdate.addAll(jogadoresRound);
         }
     }
@@ -32,10 +32,27 @@ public without sharing class RoundsTriggerHandler {
         return statusOld.equals(STATUS_ROUND_SUSPENSO) && status.equals(STATUS_ROUND_FINALIZADO);
     }
 
-    private static void setValorPagarMortos(Decimal valorPagar, List<Jogador__c> jogadoresRound) {
+    private static void setValorPagarMortos(Decimal premio, List<Jogador__c> jogadoresRound) {
+        premio = getPremioReal(premio, jogadoresRound);
+        
         for (Jogador__c jogador : jogadoresRound) {
-            jogador.ValorPagar__c = valorPagar;
+            if (Utils.isMembroStaff(jogador.RecordType.DeveloperName)) {
+                Utils.setValue(jogador, Jogador__c.ValorPagar__c, premio); 
+            }
         }    
     }
 
+    private static Decimal getPremioReal(Decimal premio, List<Jogador__c> jogadoresRound) {
+        Integer qtdMembroStaff = 0;
+        Integer i = 0;
+
+        for (Jogador__c jogador : jogadoresRound) {
+            if (Utils.isMembroStaff(jogador.RecordType.DeveloperName)) {
+                qtdMembroStaff++;
+            }
+        }
+
+        Integer qtdJogadoresValidos = (jogadoresRound.size() - qtdMembroStaff);
+        return (qtdJogadoresValidos > 0) ? premio / qtdJogadoresValidos : 0;
+    }
 }
