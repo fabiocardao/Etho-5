@@ -1,9 +1,12 @@
-trigger JogadoresTrigger on Jogador__c (before insert, before update) {
+trigger JogadoresTrigger on Jogador__c (after insert, before update) {
     
-    // Versão 1: MERDA. MUITO MERDA. EXTREMAMENTE MERDA
     if (Trigger.isBefore) {
         if (Trigger.isUpdate) {
             JogadoresTriggerHandler.beforeUpdate(Trigger.new, Trigger.oldMap);
+        }
+    } else if (Trigger.isAfter) {
+        if (Trigger.isInsert) {
+            JogadoresTriggerHandler.afterInsert(Trigger.new);
         }
     }
 }

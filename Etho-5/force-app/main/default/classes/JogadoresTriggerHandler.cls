@@ -1,9 +1,27 @@
 public without sharing class JogadoresTriggerHandler {
 
+    public static void afterInsert(List<Jogador__c> records) {
+        List<Jogador__c> jogadores = [
+                                        SELECT Id, Candidato__r.ValorDivida__c 
+                                        FROM Jogador__c 
+                                        WHERE Id IN :records
+                                     ];
+
+        for (Jogador__c jogador : jogadores) {
+            afterInsert(jogador);
+        }
+
+        update jogadores;
+    }
+
     public static void beforeUpdate(List<Jogador__c> records, Map<Id, Jogador__c> oldMap) {
         for (Jogador__c jogador : records) {
             beforeUpdate(jogador, oldMap.get(jogador.Id));
         }
+    }
+
+    private static void afterInsert(Jogador__c record) {
+        Utils.setValue(record, Jogador__c.Divida__c, record.Candidato__r.ValorDivida__c);
     }
 
     private static void beforeUpdate(Jogador__c record, Jogador__c recordOld) {
