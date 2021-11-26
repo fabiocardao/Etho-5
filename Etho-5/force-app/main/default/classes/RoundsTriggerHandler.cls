@@ -23,7 +23,7 @@ public without sharing class RoundsTriggerHandler {
     //Se o campo TotalJogadoresEliminados__c estiver considerando esse cara, o campo está errado.
     private static void handleSuspensao(Round__c record, Round__c recordOld, List<Jogador__c> jogadoresRound, List<Jogador__c> jogadoresToUpdate) {
         if (!jogadoresRound.isEmpty() && roundFinalizadoPorSuspensao(record.Status__c, recordOld.Status__c)) {
-            setValorPagarMortos(getPremioReal(record.Premio__c, jogadoresRound), jogadoresRound);
+            setValorPagarMortos(getPremioReal(record.PremioTotal__c, jogadoresRound), jogadoresRound);
             jogadoresToUpdate.addAll(jogadoresRound);
         }
     }
@@ -33,11 +33,11 @@ public without sharing class RoundsTriggerHandler {
     }
 
     private static void setValorPagarMortos(Decimal premio, List<Jogador__c> jogadoresRound) {
-        premio = getPremioReal(premio, jogadoresRound);
+        Decimal premioReal = getPremioReal(premio, jogadoresRound);
         
         for (Jogador__c jogador : jogadoresRound) {
             if (Utils.isMembroStaff(jogador.RecordType.DeveloperName)) {
-                Utils.setValue(jogador, Jogador__c.ValorPagar__c, premio); 
+                Utils.setValue(jogador, Jogador__c.ValorPagar__c, premioReal); 
             }
         }    
     }
@@ -52,7 +52,15 @@ public without sharing class RoundsTriggerHandler {
             }
         }
 
-        Integer qtdJogadoresValidos = (jogadoresRound.size() - qtdMembroStaff);
-        return (qtdJogadoresValidos > 0) ? premio / qtdJogadoresValidos : 0;
+        return calculaPremioUnitarioReal(premio, jogadoresRound.size(), qtdMembroStaff);
+    }
+
+    private static Decimal calculaPremioUnitarioReal(Decimal premio, Integer qtdJogadores, Integer qtdMembrosStaff) {
+        Decimal premioTotal = premio;
+        Decimal premioUnitario = premio / qtdJogadores;
+        Decimal premioNaoconsiderandoStaff = premioTotal - (premioUnitario * qtdMembrosStaff);
+        Decimal qtdJogadoresValidos = qtdJogadores - qtdMembrosStaff;
+
+        return premioNaoconsiderandoStaff / qtdJogadoresValidos;
     }
 }
