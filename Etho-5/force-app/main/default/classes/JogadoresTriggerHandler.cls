@@ -14,6 +14,9 @@ public without sharing class JogadoresTriggerHandler {
         update jogadores;
     }
 
+    public static void afterUpdate(List<Jogador__c> records, Map<Id, Jogador__c> oldMap) {
+    }
+
     public static void beforeUpdate(List<Jogador__c> records, Map<Id, Jogador__c> oldMap) {
         for (Jogador__c jogador : records) {
             beforeUpdate(jogador, oldMap.get(jogador.Id));
