@@ -13,6 +13,7 @@ public without sharing class RoundsSelector {
         ];
     }
 
+    // parametrizar a query
     public static List<Jogador__c> selectJogadoresNaoEliminados() {
         return [
             SELECT Id, Nick__c, Forca__c, Inteligencia__c, Velocidade__c

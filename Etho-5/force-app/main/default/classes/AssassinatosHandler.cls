@@ -35,7 +35,8 @@ public with sharing class AssassinatosHandler {
         Integer dadoAtacante = Utils.generateRandonNumberInclusive(1, 20, null);
         System.debug('dadoAtacante: ' + dadoAtacante);
 
-        Integer dadoAtaque = dadoAtacante + atacante.Forca__c.intValue();
+        //TODO: tratar nulo
+        Integer dadoAtaque = dadoAtacante + atacante.Forca__c?.intValue();
         System.debug('dadoAtaque: ' + dadoAtaque);
 
         Integer dadoDefesa = Utils.generateRandonNumberInclusive(1, 10, null) + Utils.generateRandonNumberInclusive(1, 10, null) 
@@ -52,7 +53,8 @@ public with sharing class AssassinatosHandler {
             } else {
                 if (isContraAtaque(dadoAtacante, contraAtaque)) {
                     System.debug('--# SEGUUUURAAA O CONTRA ATAQUE #--');
-                    iniciarContraAtaque(atacante, defensor);
+                    //iniciarContraAtaque(atacante, defensor);
+                    iniciarAtaque(defensor, atacante, true);
                 }
             }
         } else {
@@ -70,22 +72,21 @@ public with sharing class AssassinatosHandler {
         if (dadoAtacante != null && contraAtaque != null) {
             if (dadoAtacante == 1 && !contraAtaque) {
                 return true;
-            } else {
-                return false;
             }
-        } else {
+            
             return false;
+            
         }
+        return false;
     }
 
     @TestVisible
     private static void iniciarContraAtaque(Jogador__c ataque, Jogador__c defesa) {
         System.debug('--# INICIANDO O CONTRA ATAQUE #--');
-        Boolean contraAtaque = true;
         Jogador__c jogadorAux = ataque;
         Jogador__c jogadoAtaque = defesa;
         Jogador__c jogadorDefesa = jogadorAux;
-        iniciarAtaque(ataque, defesa, contraAtaque); 
+        iniciarAtaque(ataque, defesa, true); 
     }
 
     @TestVisible
@@ -98,14 +99,11 @@ public with sharing class AssassinatosHandler {
 
     @TestVisible
     private static Assassinato__c assassinarJogador(Jogador__c ataque, Jogador__c defesa) {
-        Assassinato__c jogadorAssassinado = new Assassinato__c(
+        return new Assassinato__c(
             Assassinados__c = defesa.Id, 
             Assassino__c = ataque.Id,
             DataHora__c = System.now()
         );
-        System.debug(JSON.serialize(jogadorAssassinado));
-
-        return jogadorAssassinado;
     }
 
     @TestVisible

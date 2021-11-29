@@ -13,12 +13,10 @@ public without sharing class Utils {
     }*/
 
     public static Integer generateRandonNumberInclusive(Integer posicaoInicial, Integer posicaoFinal, Integer jaSorteado) {
-        Integer indiceInicial = Integer.valueOf(Math.ceil(posicaoInicial));
-        Integer indiceFinal = Integer.valueOf(Math.floor(posicaoFinal));
         Integer resultado;
 
         while (resultado == null || resultado == jaSorteado) {
-            resultado = Integer.valueOf(Math.floor(Math.random() * (indiceFinal - indiceInicial + 1)) + indiceInicial);
+            resultado = Integer.valueOf(Math.floor(Math.random() * (posicaoFinal - posicaoInicial + 1)) + posicaoInicial);
         }
         return resultado;
     }
