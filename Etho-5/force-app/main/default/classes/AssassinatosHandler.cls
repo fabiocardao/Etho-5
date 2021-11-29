@@ -3,8 +3,6 @@ public with sharing class AssassinatosHandler {
     static final Integer EH_CONTRA_ATAQUE                       = 1;
     static final Integer NAO_EH_CONTRA_ATAQUE                   = 2;
     static final Integer FALHA_ENTRADA_PARAMETROS_CONTRA_ATAQUE = 3;
-    
-    public AssassinatosHandler() {}
 
     public static void execute() {        
         List<Jogador__c> jogadoresNaoEliminados = RoundsSelector.selectJogadoresNaoEliminados();
