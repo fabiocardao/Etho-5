@@ -58,10 +58,10 @@ public without sharing class JogadoresTriggerHandler {
 
     @TestVisible // Anotação para deixar o método visível para classes de teste.
     private static Boolean foiEliminado(Jogador__c record, Jogador__c recordOld) {
-        return isChanged(recordOld, record, Jogador__c.Eliminado__c);
+        return record.Eliminado__c && isChanged(recordOld, record, Jogador__c.Eliminado__c);
     }
 
     private static Boolean morreu(Jogador__c record, Jogador__c recordOld) {
-        return isChanged(recordOld, record, Jogador__c.Morreu__c);
+        return record.Morreu__c && isChanged(recordOld, record, Jogador__c.Morreu__c);
     }
 }
