@@ -98,13 +98,13 @@ public with sharing class AssassinatosHandlerTest {
         Boolean contraAtaqueFalso = false;
 
         Test.startTest();
-        AssassinatosHandler.iniciarAtaque(atacante, defensor, contraAtaqueVerdadeiro);
-        AssassinatosHandler.iniciarAtaque(atacante, defensor, contraAtaqueFalso);
+        AssassinatosHandler.iniciarContraAtaque(contraAtaqueVerdadeiro, atacante, defensor);
+        AssassinatosHandler.iniciarContraAtaque(contraAtaqueFalso, atacante, defensor);
         Test.stopTest();
     }
 
     @isTest
     static void iniciarAtaque() {
-        
+
     }
 }

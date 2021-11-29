@@ -54,7 +54,7 @@ public with sharing class AssassinatosHandler {
             } else {
                 if (isContraAtaque(dadoAtacante, contraAtaque)) {
                     System.debug('--# SEGUUUURAAA O CONTRA ATAQUE #--');
-                    iniciarContraAtaque(contraAtaque, atacante, defensor);
+                    iniciarContraAtaque(atacante, defensor);
                 }
             }
         } else {
@@ -62,6 +62,32 @@ public with sharing class AssassinatosHandler {
             // throw new DadosNaoInformadosException('Dados de combate e/ou Dados de defesa não foram informados')
             System.debug('--# NÃO TEMOS INFORMAÇÕES PARA INICIAR O COMBATE');
         }
+    }
+
+    @TestVisible
+    private static Boolean isContraAtaque(Integer dadoAtacante, Boolean contraAtaque) {
+        System.debug('dadoAtacante: ' + dadoAtacante);
+        System.debug('contraAtaque: ' + contraAtaque);
+
+        if (dadoAtacante != null && contraAtaque != null) {
+            if (dadoAtacante == 1 && !contraAtaque) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @TestVisible
+    private static void iniciarContraAtaque(Jogador__c ataque, Jogador__c defesa) {
+        System.debug('--# INICIANDO O CONTRA ATAQUE #--');
+        Boolean contraAtaque = true;
+        Jogador__c jogadorAux = ataque;
+        Jogador__c jogadoAtaque = defesa;
+        Jogador__c jogadorDefesa = jogadorAux;
+        iniciarAtaque(ataque, defesa, contraAtaque); 
     }
 
     @TestVisible
@@ -82,32 +108,6 @@ public with sharing class AssassinatosHandler {
         System.debug(JSON.serialize(jogadorAssassinado));
 
         return jogadorAssassinado;
-    }
-
-    @TestVisible
-    private static Integer isContraAtaque(Integer dadoAtacante, Boolean contraAtaque) {
-        System.debug('dadoAtacante: ' + dadoAtacante);
-        System.debug('contraAtaque: ' + contraAtaque);
-
-        if (dadoAtacante != null && contraAtaque != null) {
-            if (dadoAtacante == 1 && !contraAtaque) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    @TestVisible
-    private static void iniciarContraAtaque(Boolean contraAtaque, Jogador__c ataque, Jogador__c defesa) {
-        System.debug('--# INICIANDO O CONTRA ATAQUE #--');
-        contraAtaque = true;
-        Jogador__c jogadorAux = ataque;
-        Jogador__c jogadoAtaque = defesa;
-        Jogador__c jogadorDefesa = jogadorAux;
-        iniciarAtaque(ataque, defesa, contraAtaque); 
     }
 
     @TestVisible
