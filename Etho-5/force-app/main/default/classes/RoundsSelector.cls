@@ -22,4 +22,24 @@ public without sharing class RoundsSelector {
             AND Round__r.Status__c = 'Em Andamento'
         ];
     }
+
+    public static List<Round__c> selectAllRoundsWithJogadores() {
+        return [
+            SELECT Id, Name,  TotalJogadoresEliminados__c, PremioTotal__c,
+                   (
+                       SELECT Id, Nick__c, Candidato__r.Name
+                       FROM Jogadores__r
+                       WHERE Eliminado__c = false
+                   )
+            FROM Round__c 
+        ];
+    }
+
+
+    public static List<Round__c> selectRoundsEmAndamento() {
+        return [
+            SELECT Id, Status__c, Name FROM Round__c
+            WHERE Status__c = 'Em Andamento'
+        ];
+    }
 }
