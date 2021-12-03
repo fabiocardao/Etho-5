@@ -1,0 +1,12 @@
+.container-jogadores-round {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.vivo  {
+    --sds-c-card-color-background: #25C92A;
+}
+
+.morto {
+    --sds-c-card-color-background: #FF0000
+}
