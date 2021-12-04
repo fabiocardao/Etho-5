@@ -34,12 +34,4 @@ public without sharing class RoundsSelector {
             FROM Round__c 
         ];
     }
-
-
-    public static List<Round__c> selectRoundsEmAndamento() {
-        return [
-            SELECT Id, Status__c, Name FROM Round__c
-            WHERE Status__c = 'Em Andamento'
-        ];
-    }
 }

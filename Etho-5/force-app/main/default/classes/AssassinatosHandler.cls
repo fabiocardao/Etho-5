@@ -1,10 +1,7 @@
 public with sharing class AssassinatosHandler {
 
-    static final Integer EH_CONTRA_ATAQUE                       = 1;
-    static final Integer NAO_EH_CONTRA_ATAQUE                   = 2;
-    static final Integer FALHA_ENTRADA_PARAMETROS_CONTRA_ATAQUE = 3;
-
     public static void execute() {        
+        System.debug('EXECUTE');
         List<Jogador__c> jogadoresNaoEliminados = RoundsSelector.selectJogadoresNaoEliminados();
         System.debug('jogadoresNaoEliminados: ' + jogadoresNaoEliminados);
 
@@ -44,6 +41,7 @@ public with sharing class AssassinatosHandler {
         System.debug('dadoDefesa: ' + dadoDefesa);
 
         if (isDadosAtaqueDefesaInformados(dadoAtaque, dadoDefesa)) {
+            System.debug('--# DADOS INFORMADOS #--');
             if (isAtaqueMaiorQueDefesa(dadoAtaque, dadoDefesa)) {
                 System.debug('--# ATAQUE MAIOR QUE DEFESA #--');
                 Assassinato__c jogadorAssassinado = assassinarJogador(atacante, defensor);
