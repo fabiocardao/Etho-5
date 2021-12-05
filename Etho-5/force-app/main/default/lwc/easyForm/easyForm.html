@@ -1,0 +1,11 @@
+<template>
+    <!--<c-exibir-nome key={nome} nome-variavel-escaralhada={nome}></c-exibir-nome>-->
+    <lightning-input 
+        label="Filtro de Sobrenome" 
+        onchange={handleChange}>
+    </lightning-input>
+
+    <template for:each={contatosFiltrados} for:item="contato">
+        <div key={contato.Id}>Nome completo: {contato.Name} {contato.Sobrenome__c}</div>
+    </template>
+</template>
