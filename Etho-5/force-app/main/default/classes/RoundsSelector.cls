@@ -25,13 +25,28 @@ public without sharing class RoundsSelector {
 
     public static List<Round__c> selectAllRoundsWithJogadores() {
         return [
-            SELECT Id, Name,  TotalJogadoresEliminados__c, PremioTotal__c,
+            SELECT Id, Name, Status__c, TotalJogadoresEliminados__c, PremioTotal__c,
                    (
-                       SELECT Id, Nick__c, Candidato__r.Name
+                       SELECT Id, Nick__c, Name, Forca__c, Inteligencia__c, Velocidade__c
+                            , Candidato__r.Name, Candidato__r.ValorDivida__c, Candidato__r.Email__c
+                       FROM Jogadores__r
+                       WHERE Eliminado__c = false
+                   )
+            FROM Round__c
+            WHERE Status__c = 'Em Andamento'
+        ];
+    }
+
+    public static List<Round__c> selectRoundsEmAndamentoWithJogadores() {
+        return [
+            SELECT Id, Name,  Status__c, PremioTotal__c,
+                   (
+                       SELECT Id, Nick__c, Candidato__r.Name, Forca__c, Inteligencia__c, Velocidade__c
                        FROM Jogadores__r
                        WHERE Eliminado__c = false
                    )
             FROM Round__c 
+            WHERE Status__c = 'Em Andamento'
         ];
     }
 }
