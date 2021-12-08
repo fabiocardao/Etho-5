@@ -4,18 +4,19 @@
             <lightning-badge label={round.Status__c} class="round-andamento"></lightning-badge>
         </ul>
         <ul class="slds-var-m-around_medium">            
-            <template for:each={round.Jogadores__r} for:item="jogador">
+            <template for:each={jogadores} for:item="jogador">
                 <lightning-card icon-name="standard:avatar" title={jogador.Nick__c} key={jogador.Id}>
                     <li class="slds-var-m-left_large">
                         <p>Força: {jogador.Forca__c}</p>
                         <p>Velocidade: {jogador.Velocidade__c}</p>
                         <p>Inteligência: {jogador.Inteligencia__c}</p>
-                        <p>Valor da Dívida: {jogador.Candidato__r.ValorDivida__c}</p>
+                        <p>{jogador.valorDivida}</p>
+                       <!--<lightning-input type="number" formatter="currency" variant="label-inline" value={jogador.Candidato__r.ValorDivida__c} label="Valor da Dívida"></lightning-input>-->
                     </li>
                 </lightning-card>
             </template>
         </ul>
-        <div class="slds-text-align_center slds-text-title_bold" slot="footer">Prêmio total: {formatarMoeda}</div>
+        <div class="slds-text-align_center slds-text-title_bold" slot="footer">Prêmio total: {premioTotal}</div>
         <p class="slds-var-p-horizontal_small"></p>
     </lightning-card>
 </template>
