@@ -1,6 +1,10 @@
 public without sharing class JogadoresTriggerHandler {
 
-    public static void afterInsert(List<Jogador__c> records) {
+    public static void beforeUpdate(List<Jogador__c> records, Map<Id, Jogador__c> oldMap) {
+
+    }
+
+    /*public static void afterInsert(List<Jogador__c> records) {
         List<Jogador__c> jogadores = [
                                         SELECT Id, Candidato__r.ValorDivida__c 
                                         FROM Jogador__c 
@@ -63,5 +67,5 @@ public without sharing class JogadoresTriggerHandler {
 
     private static Boolean morreu(Jogador__c record, Jogador__c recordOld) {
         return record.Morreu__c && isChanged(recordOld, record, Jogador__c.Morreu__c);
-    }
+    }*/
 }
