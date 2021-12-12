@@ -2,11 +2,13 @@ public without sharing class JogadoresTriggerHandler {
 
     public static void beforeUpdate(List<Jogador__c> records, Map<Id, Jogador__c> oldMap) {
         for (Jogador__c jogador : records) {
-            Jogador__c jogadorOld = oldMap.get(jogador.Id);
+            beforeUpdate(jogador, oldMap.get(jogador.Id));
+        }
+    }
 
-            if (!jogadorOld.Eliminado__c && jogador.Eliminado__c) {
-                jogador.DataMorte__c = System.now();
-            }
+    private static beforeUpdate(Jogador__c jogador, Jogador__c recordOld) {
+        if (!jogadorOld.Eliminado__c && jogador.Eliminado__c) {
+            jogador.DataMorte__c = System.now();
         }
     }
 
