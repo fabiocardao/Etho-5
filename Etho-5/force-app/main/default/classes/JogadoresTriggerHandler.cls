@@ -6,10 +6,22 @@ public without sharing class JogadoresTriggerHandler {
         }
     }
 
-    private static beforeUpdate(Jogador__c jogador, Jogador__c recordOld) {
-        if (!jogadorOld.Eliminado__c && jogador.Eliminado__c) {
-            jogador.DataMorte__c = System.now();
+    private static void beforeUpdate(Jogador__c jogador, Jogador__c recordOld) {
+        if (isChanged(jogadorOld.Eliminado__c && jogador.Eliminado__c)) {
+            setValue(record, Jogador__c.DataMorte__c, System.now());
         }
+    }
+
+    private static void isChanged(Jogador__c record, Jogador__c recordToCompare, Schema.SObjectField fieldToEvaluate) {
+        isChanged(record.get(fieldToEvaluate), recordToCompare.get(fieldToEvaluate));
+    }
+
+    private static Boolean isChanged(Object value, Object valueToCompare) {
+        return value != valueToCompare;
+    }
+
+    private static void setValue(Jogador__c record, Schema.SObjectField field, Object value) {
+        record.put(field, value);
     }
 
     /*public static void afterInsert(List<Jogador__c> records) {
