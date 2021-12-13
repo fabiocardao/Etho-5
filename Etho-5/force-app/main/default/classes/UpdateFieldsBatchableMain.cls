@@ -5,9 +5,9 @@ public with sharing class UpdateFieldsBatchableMain {
             Account.BillingState => 'RJ'
         };*/
 
-        /*Map<Schema.SObjectField, Object> fieldsValuesMap2 = new Map<Schema.SObjectField, Object> {
+        /*Map<Schema.SObjectField, Object> fieldsValuesMap = new Map<Schema.SObjectField, Object> {
             Candidato__c.CEPAlterado__c => false,
-            Candidato__c.Email__c => 'ma@oie.com'
+            Candidato__c.Email__c => 'teste@salesforce.com'
         };*/
 
         Map<Schema.SObjectField, Object> fieldsValuesMap = new Map<Schema.SObjectField, Object> {
@@ -18,8 +18,7 @@ public with sharing class UpdateFieldsBatchableMain {
             Jogador__c.Inteligencia__c => 10
         };
 
-        //String query = 'SELECT Aceite__c, Bairro__c, Celular__c, CEPAlterado__c FROM Candidato__c';
-        //String query = 'SELECT Id, Name, TerminoJogos__c, InicioJogos__c,  FROM Round__c WHERE Id in :id';
+        //String query = 'SELECT Aceite__c, Bairro__c, Celular__c, CEPAlterado__c, Email__c FROM Candidato__c WHERE CEPAlterado__c = true';
         String query = 'SELECT Nick__c, Divida__c, Velocidade__c, Forca__c, Inteligencia__c FROM Jogador__c WHERE Eliminado__c = false';
 
 
