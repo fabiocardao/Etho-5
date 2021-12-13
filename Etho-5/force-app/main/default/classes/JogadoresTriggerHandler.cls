@@ -6,14 +6,12 @@ public without sharing class JogadoresTriggerHandler {
         }
     }
 
-    private static void beforeUpdate(Jogador__c jogador, Jogador__c recordOld) {
-        if (isChanged(jogadorOld.Eliminado__c && jogador.Eliminado__c)) {
-            setValue(record, Jogador__c.DataMorte__c, System.now());
-        }
+    private static void beforeUpdate(Jogador__c record, Jogador__c recordOld) {
+        handleEliminacaoMorte(record, recordOld);
     }
 
-    private static void isChanged(Jogador__c record, Jogador__c recordToCompare, Schema.SObjectField fieldToEvaluate) {
-        isChanged(record.get(fieldToEvaluate), recordToCompare.get(fieldToEvaluate));
+    private static Boolean isChanged(Jogador__c record, Jogador__c recordToCompare, Schema.SObjectField fieldToEvaluate) {
+        return isChanged(record.get(fieldToEvaluate), recordToCompare.get(fieldToEvaluate));
     }
 
     private static Boolean isChanged(Object value, Object valueToCompare) {
@@ -22,6 +20,35 @@ public without sharing class JogadoresTriggerHandler {
 
     private static void setValue(Jogador__c record, Schema.SObjectField field, Object value) {
         record.put(field, value);
+    }
+
+    private static void handleEliminacaoMorte(Jogador__c record, Jogador__c recordOld) {
+        if (ehJogadorPadrao(record, recordOld) && foiEliminado(record, recordOld)) {
+            Utils.setValue(record, Jogador__c.Morreu__c, true);
+        }
+
+        if (morreu(record, recordOld)) {
+            Utils.setValue(record, Jogador__c.DataMorte__c, System.now());
+            Utils.setValue(record, Jogador__c.Eliminado__c, true);
+        }
+    }
+
+    private static Boolean ehJogadorPadrao(Jogador__c record, Jogador__c recordOld) {
+        //return record.RecordTypeId.equals(Schema.SObjectType.Jogador__c.getRecordTypeInfosByDeveloperName()
+        //    .get(Label.RECORD_TYPE_DEVELOPER_NAME_JOGADOR_PADRAO).getRecordTypeId());
+
+        return record.RecordTypeId.equals(Schema.SObjectType.Jogador__c.getRecordTypeInfosByDeveloperName()
+           .get('MembroStaff').getRecordTypeId());
+    }
+
+
+    @TestVisible // Anotação para deixar o método visível para classes de teste.
+    private static Boolean foiEliminado(Jogador__c record, Jogador__c recordOld) {
+        return record.Eliminado__c && isChanged(recordOld, record, Jogador__c.Eliminado__c);
+    }
+
+    private static Boolean morreu(Jogador__c record, Jogador__c recordOld) {
+        return record.Morreu__c && isChanged(recordOld, record, Jogador__c.Morreu__c);
     }
 
     /*public static void afterInsert(List<Jogador__c> records) {
@@ -51,41 +78,11 @@ public without sharing class JogadoresTriggerHandler {
         Utils.setValue(record, Jogador__c.Divida__c, record.Candidato__r.ValorDivida__c);
     }
 
-    private static void beforeUpdate(Jogador__c record, Jogador__c recordOld) {
-        handleEliminacaoMorte(record, recordOld);
-    }
-
     private static Boolean isChanged(Jogador__c record, Jogador__c recordToCompare, Schema.SObjectField fieldToEvaluate) {
         return isChanged(record.get(fieldToEvaluate), recordToCompare.get(fieldToEvaluate));
     }
 
     private static Boolean isChanged(Object value, Object valueToCompare) {
         return value != valueToCompare;
-    }
-
-    private static void handleEliminacaoMorte(Jogador__c record, Jogador__c recordOld) {
-        if (ehJogadorPadrao(record, recordOld) && foiEliminado(record, recordOld)) {
-            Utils.setValue(record, Jogador__c.Morreu__c, true);
-        }
-
-        if (morreu(record, recordOld)) {
-            Utils.setValue(record, Jogador__c.DataMorte__c, System.now());
-            Utils.setValue(record, Jogador__c.Eliminado__c, true);
-        }
-    }
-
-    private static Boolean ehJogadorPadrao(Jogador__c record, Jogador__c recordOld) {
-        return record.RecordTypeId.equals(Schema.SObjectType.Jogador__c.getRecordTypeInfosByDeveloperName()
-            .get(Label.RECORD_TYPE_DEVELOPER_NAME_JOGADOR_PADRAO).getRecordTypeId());
-    }
-
-
-    @TestVisible // Anotação para deixar o método visível para classes de teste.
-    private static Boolean foiEliminado(Jogador__c record, Jogador__c recordOld) {
-        return record.Eliminado__c && isChanged(recordOld, record, Jogador__c.Eliminado__c);
-    }
-
-    private static Boolean morreu(Jogador__c record, Jogador__c recordOld) {
-        return record.Morreu__c && isChanged(recordOld, record, Jogador__c.Morreu__c);
     }*/
 }

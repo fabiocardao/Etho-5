@@ -5,54 +5,81 @@ public with sharing class AssassinatosHandler {
         List<Jogador__c> jogadoresNaoEliminados = RoundsSelector.selectJogadoresNaoEliminados();
         System.debug('jogadoresNaoEliminados: ' + jogadoresNaoEliminados);
 
+        RoundsHandler.iniciarRound(jogadoresNaoEliminados.get(0));
+
         Integer qtdNaoEliminados = jogadoresNaoEliminados.size();
         System.debug('qtdNaoEliminados: ' + qtdNaoEliminados);
 
         //TODO: ASSASSINO <> ASSASSINADO - OK
-        Integer randomAssassino = Utils.generateRandonNumberInclusive(0, qtdNaoEliminados - 1, null);
-        System.debug('randomAssassino: ' + randomAssassino);
+        Integer randomAtaque = Utils.generateRandonNumberInclusive(0, qtdNaoEliminados - 1, null);
+        System.debug('randomAssassino: ' + randomAtaque);
 
-        Integer randomAssassinado = Utils.generateRandonNumberInclusive(0, qtdNaoEliminados - 1, randomAssassino);
-        System.debug('randomAssassinado: ' + randomAssassinado);
+        Integer randomDefesa = Utils.generateRandonNumberInclusive(0, qtdNaoEliminados - 1, randomAtaque);
+        System.debug('randomAssassinado: ' + randomDefesa);
 
-        Jogador__c  atacante = jogadoresNaoEliminados.get(randomAssassino);
-        System.debug('atacante: ' + atacante);
+        definirAdversarios(jogadoresNaoEliminados, randomAtaque, randomDefesa);
+    }
 
-        Jogador__c defensor = jogadoresNaoEliminados.get(randomAssassinado);
-        System.debug('defensor: ' + defensor);
+    @TestVisible
+    private static void definirAdversarios(List<Jogador__c> jogadoresNaoEliminados, Integer randomAtaque, Integer randomDefesa) {
+        Jogador__c  ataque = jogadoresNaoEliminados.get(randomAtaque);
+        System.debug('atacante: ' + ataque);
+
+        Jogador__c defesa = jogadoresNaoEliminados.get(randomDefesa);
+        System.debug('defensor: ' + defesa);
+
+        Integer qtdJogadores = jogadoresNaoEliminados.size();
+        System.debug('qtdJogadores: ' + qtdJogadores);
 
         Boolean contraAtaque = false;
 
         //não é contraAtaque pois é a primeira chamada ao método.
-        iniciarAtaque(atacante, defensor, contraAtaque);
+        iniciarAtaque(ataque, defesa, contraAtaque, qtdJogadores);
+
     }
 
     @TestVisible
-    private static void iniciarAtaque(Jogador__c atacante, Jogador__c defensor, Boolean contraAtaque) {
+    private static void iniciarAtaque(Jogador__c ataque, Jogador__c defesa, Boolean contraAtaque, Integer qtdJogadores) {
         Integer dadoAtacante = Utils.generateRandonNumberInclusive(1, 20, null);
         System.debug('dadoAtacante: ' + dadoAtacante);
 
         //TODO: tratar nulo
-        Integer dadoAtaque = dadoAtacante + atacante.Forca__c?.intValue();
+        Integer dadoAtaque = dadoAtacante + ataque.Forca__c?.intValue();
         System.debug('dadoAtaque: ' + dadoAtaque);
 
         Integer dadoDefesa = Utils.generateRandonNumberInclusive(1, 10, null) + Utils.generateRandonNumberInclusive(1, 10, null) 
-                        + defensor.Inteligencia__c.intValue() + defensor.Velocidade__c.intValue();
+                        + defesa.Inteligencia__c.intValue() + defesa.Velocidade__c.intValue();
         System.debug('dadoDefesa: ' + dadoDefesa);
+
+
+        System.debug('Jogador__c.Id: ' + ataque.Id);
+        System.debug('Jogador__c.Nick__c: ' + ataque.Nick__c);
+        System.debug('Jogador__c.Forca__c: ' + ataque.Forca__c);
+        System.debug('Jogador__c.Inteligencia__c: ' + ataque.Inteligencia__c);
+        System.debug('Jogador__c.Velocidade__c: ' + ataque.Velocidade__c);
+        System.debug('Jogador__c.Round__r.Id: ' + ataque.Round__r.Id);
+
 
         if (isDadosAtaqueDefesaInformados(dadoAtaque, dadoDefesa)) {
             System.debug('--# DADOS INFORMADOS #--');
-            if (isAtaqueMaiorQueDefesa(dadoAtaque, dadoDefesa)) {
+           if (isAtaqueMaiorQueDefesa(dadoAtaque, dadoDefesa)) {
                 System.debug('--# ATAQUE MAIOR QUE DEFESA #--');
-                Assassinato__c jogadorAssassinado = assassinarJogador(atacante, defensor);
+                Assassinato__c jogadorAssassinado = assassinarJogador(ataque, defesa);
                 System.debug('jogadorAssassinado: ' + jogadorAssassinado);
     
+                if(!hasMoreJogadores(qtdJogadores)) {
+                    System.debug('VAMOS ENCERRAR O ROUND');
+                    RoundsHandler.encerrarRound(ataque);
+                } else {
+                    System.debug('--# NÃO ENCERRA O ROUND, HÁ MAIS JOGADORES. #--');
+                }
+
                 insert jogadorAssassinado;
             } else {
+                System.debug('ENTROU NO ELSE');
                 if (isContraAtaque(dadoAtacante, contraAtaque)) {
                     System.debug('--# SEGUUUURAAA O CONTRA ATAQUE #--');
-                    //iniciarContraAtaque(atacante, defensor);
-                    iniciarAtaque(defensor, atacante, true);
+                    iniciarAtaque(defesa, ataque, true, qtdJogadores);
                 }
             }
         } else {
@@ -60,6 +87,11 @@ public with sharing class AssassinatosHandler {
             // throw new DadosNaoInformadosException('Dados de combate e/ou Dados de defesa não foram informados')
             System.debug('--# NÃO TEMOS INFORMAÇÕES PARA INICIAR O COMBATE');
         }
+    }
+
+    private static Boolean hasMoreJogadores(Integer qtdJogadores) {
+        //SE TEMOS APENAS 2 JOGADORES E HOUVE MORTE, NÃO HAVERÁ MAIS CONFRONTO.
+        return qtdJogadores > 2;
     }
 
     @TestVisible
@@ -76,15 +108,6 @@ public with sharing class AssassinatosHandler {
             
         }
         return false;
-    }
-
-    @TestVisible
-    private static void iniciarContraAtaque(Jogador__c ataque, Jogador__c defesa) {
-        System.debug('--# INICIANDO O CONTRA ATAQUE #--');
-        Jogador__c jogadorAux = ataque;
-        Jogador__c jogadoAtaque = defesa;
-        Jogador__c jogadorDefesa = jogadorAux;
-        iniciarAtaque(ataque, defesa, true); 
     }
 
     @TestVisible
