@@ -10,14 +10,14 @@ public with sharing class RoundsHandler {
         update round;
     }
 
-    public static void encerrarRound(Jogador__c ataque) {
+    public static void encerrarRound(Jogador__c campeao) {
         System.debug('--# ENCERRANDO O ROUND #--');
 
         Round__c round = new Round__c(
             TerminoJogos__c = DateUtil.retornarDatetime().date(),
-            Vencedor__c = ataque.Id,
+            Vencedor__c = campeao.Id,
             Status__c = 'Finalizado',
-            Id = ataque.Round__r.Id
+            Id = campeao.Round__r.Id
         );
 
         update round;

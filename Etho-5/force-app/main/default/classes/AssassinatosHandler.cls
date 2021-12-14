@@ -10,6 +10,11 @@ public with sharing class AssassinatosHandler {
         Integer qtdNaoEliminados = jogadoresNaoEliminados.size();
         System.debug('qtdNaoEliminados: ' + qtdNaoEliminados);
 
+        definirAdversarios(jogadoresNaoEliminados);
+    }
+
+    @TestVisible
+    private static void definirAdversarios(List<Jogador__c> jogadoresNaoEliminados) {
         //TODO: ASSASSINO <> ASSASSINADO - OK
         Integer randomAtaque = Utils.generateRandonNumberInclusive(0, qtdNaoEliminados - 1, null);
         System.debug('randomAssassino: ' + randomAtaque);
@@ -17,11 +22,6 @@ public with sharing class AssassinatosHandler {
         Integer randomDefesa = Utils.generateRandonNumberInclusive(0, qtdNaoEliminados - 1, randomAtaque);
         System.debug('randomAssassinado: ' + randomDefesa);
 
-        definirAdversarios(jogadoresNaoEliminados, randomAtaque, randomDefesa);
-    }
-
-    @TestVisible
-    private static void definirAdversarios(List<Jogador__c> jogadoresNaoEliminados, Integer randomAtaque, Integer randomDefesa) {
         Jogador__c  ataque = jogadoresNaoEliminados.get(randomAtaque);
         System.debug('atacante: ' + ataque);
 
@@ -35,7 +35,6 @@ public with sharing class AssassinatosHandler {
 
         //não é contraAtaque pois é a primeira chamada ao método.
         iniciarAtaque(ataque, defesa, contraAtaque, qtdJogadores);
-
     }
 
     @TestVisible
